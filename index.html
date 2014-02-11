@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Autonex Carousel</title>
+</head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="carousel.js"></script>
+<link rel="stylesheet" type="text/css" href="carousel.css">
+<style type="text/css">
+	*{
+		margin: 0;
+		padding: 0;
+	}
+	h2{
+		display: block;
+		margin: auto;
+		font-family: helvetica,arial;
+		font-weight: 400;
+		text-align: center;
+		text-rendering:geometricPrecision;
+	}
+	#base{
+		background: #999;
+		max-width: 80%;
+	}
+	#slider{ /* slider */
+
+	}
+	#slider article{
+		background: black;
+		width: 245px;
+		padding: 5px;
+	}
+	#slider article:nth-child(3),#slider article:nth-child(6),#slider article:last-child{
+		background: orange;
+	}
+	#botones{ /* contenedor de botones */
+		margin: 10px auto;
+		width: 150px;
+	}
+	#botones button{ /* botones */
+
+	}
+
+	/*@media screen and (max-width: 800px){
+
+		body{
+			background: orange;
+		}
+		#slider article{
+			width: 100px;
+		}
+	}
+	@media screen and (max-width: 500px){
+
+		body{
+			background: green;
+		}
+		#slider article{
+			width: 60px;
+		}
+	}*/
+</style>
+<body>
+	<header>
+	<section>
+		<h2>Autonex-carousel</h2></header>
+	</section>
+
+<section id="base">
+	<div id="contenedor">
+		<div id="slider">
+			<article><img src="img/sk.jpg"></article><article>
+			<img src="img/sk.jpg"></article><article>
+			<img src="img/sk.jpg"></article><article>
+			<img src="img/sk.jpg"></article><article>
+			<img src="img/sk.jpg"></article><article>
+			<img src="img/sk.jpg"></article><article>
+			<img src="img/sk.jpg"></article><article>
+			<img src="img/sk.jpg"></article><article>
+			<img src="img/sk.jpg"></article><article>
+			<img src="img/sk.jpg"></article>
+		</div>
+	</div>
+</section>
+
+	<section>
+		<section id="botones">
+			<button id="prev">Anterior</button>
+			<button id="nex">Siguiente</button>
+		</section>
+	</section>
+</body>
+</html>

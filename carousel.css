@@ -1,0 +1,26 @@
+	.base{
+		overflow: hidden;
+		display: block;
+		margin: auto;
+	}
+	.contenedor{/* contenedor */
+		display: block;
+		overflow: hidden;
+		margin: auto;
+	}
+	.slider{ /* slider */
+		display: block;
+		position: relative;
+		box-sizing:border-box;
+		white-space: nowrap;
+	}
+	.items{ /* items */
+		display: inline-flex;
+	}
+	.items img{ /* imagenes de items */
+		width: 100%;
+		height: auto;
+	}
+	.buttons{ /* botones */
+		cursor: pointer;
+	}
