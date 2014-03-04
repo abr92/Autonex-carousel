@@ -15,7 +15,7 @@
 		white-space: nowrap;
 	}
 	.items{ /* items */
-		display: inline-flex;
+		display: inline-block;
 	}
 	.items img{ /* imagenes de items */
 		width: 100%;
