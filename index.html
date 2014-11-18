@@ -70,7 +70,7 @@
 	<section>
 		<h2>Autonex-carousel</h2></header>
 	</section>
-
+	<div id="imgView"></div>
       <div id="carousel">
         <div class="base">
             <ul class="slider">
@@ -101,7 +101,7 @@
 
 <script>
                                 var gallery = new AutoNextCarousel({
-                                    view : ".image-view",
+                                    view : "#imgView",
                                     base : ".base",
                                     slider : ".slider",
                                     nex : "#nex",
@@ -109,4 +109,7 @@
                                     activeClass : "active",
                                     limit : 4
                                 });
+                                
+                                // gallery.next();
+                                // gallery.prev();
 </script>
