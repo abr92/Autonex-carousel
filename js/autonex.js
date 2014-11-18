@@ -1,171 +1,137 @@
-/*
-Name : Automatic-width-carousel
-Autor : Abraham Díaz
-version : 2.0
-*/
-function carousel_ini(base,contenedor,slider,items,nex,prev,timer){
+// Autor: Abraham DIaz
+// Version : 1.0
+var AutoNextCarousel = function(settings){
 
-		var index = 0; //Definimos un conteo dependiendo de cuantos items se veran y cuantos hay :::: Numero de items entre items a ver.
-		$(base).addClass('base');
-		$(contenedor).addClass('contenedor');
-		$(slider).addClass('slider');
-		$(items).addClass('items');
-		$(nex).addClass('buttons');
-		$(prev).addClass('buttons');
-		$('*').css({
-			"transition" : "all .5s ease",
-			"-webkit-transition" : "all .5s ease",
-			"-moz-transition" : "all .5s ease"
-		});
-		
-		recalculate();
+    var index = 0;
+    var nextLimit = 0;
+    var prevLimit = 0;
+    var nextPosition = 0;
+    var prevPosition = 0;
+    var base,baseWidth,slider,items,itemsLimit,itemWidth,itemsWidth,next,prev,imgView;
 
-		function recalculate(type){
+    // Resize end
+    (function(e,d,a){var b,f,c;c="resizeEnd";f={delay:250};b=function(h,g,i){if(typeof g==="function"){i=g;g={}}i=i||null;this.element=h;this.settings=e.extend({},f,g);this._defaults=f;this._name=c;this._timeout=false;this._callback=i;return this.init()};b.prototype={init:function(){var g,h;h=this;g=e(this.element);return g.on("resize",function(){return h.initResize()})},getUTCDate:function(h){var g;h=h||new Date();g=Date.UTC(h.getUTCFullYear(),h.getUTCMonth(),h.getUTCDate(),h.getUTCHours(),h.getUTCMinutes(),h.getUTCSeconds(),h.getUTCMilliseconds());return g},initResize:function(){var g;g=this;g.controlTime=g.getUTCDate();if(g._timeout===false){g._timeout=true;return setTimeout(function(){return g.runCallback(g)},g.settings.delay)}},runCallback:function(h){var g;g=h.getUTCDate();if(g-h.controlTime<h.settings.delay){return setTimeout(function(){return h.runCallback(h)},h.settings.delay)}else{h._timeout=false;return h._callback()}}};return e.fn[c]=function(g,h){return this.each(function(){if(!e.data(this,"plugin_"+c)){return e.data(this,"plugin_"+c,new b(this,g,h))}})}})(jQuery,window,document);
+    // Settings
+    $(settings.slider+" > * img").css({"width" : 100+"%", "height" : 100+"%", "margin-bottom" : -2.5+"px"});
+    // Override vars
+    imgView = $(settings.view);
+    base = $(settings.base).css({"display" : "block", "width" : 100+"%"});
+    slider = $(settings.slider).css({"display" : "block", "white-space" : "nowrap", "box-sizing" : "border-box", "position" : "relative"});
+    items = $(settings.slider+" > *").css({"display" : "block", "float" : "left"});
+    
+    for(var i = 1;i <= items.length;i++){
+        $(settings.slider+" > *:nth-child("+i+") img").attr("num", i);
+    }
 
-			/*$(base).animate({
-				height : 0+'px'
-			});*/
+    (function(){
 
-				$num_items = $(items).length;
-				$padding = $(items).innerWidth() - $(items).width();
-				$ancho = $(items).width()+$padding;
-				var $height = $(items).height();
-				calculo = $(base).width() / $ancho;
-				items_views = calculo.toFixed();
-				$an_section = $ancho*items_views;
-				
-				//Si los item vistos son mayores que el contenedor y mayores a 1 numero de items por cada resta un item de la vista
-				if($ancho*items_views > $(base).width() && items_views > 1){
-					items_views --;
-					$an_section = $ancho*items_views;
-				}
+        // Base Settings
+        baseWidth = base.width();
+        // Items Settings
+        itemsLimit = settings.limit;
+        itemWidth = baseWidth / itemsLimit;
+        itemsWidth = itemWidth * items.length;
+        // Controlls Settings
+        next = $(settings.next);
+        prev = $(settings.prev);
+        
+        base.css({
+            "overflow" : "hidden"
+        });
 
-				$(contenedor).css({
-					width : $an_section+"px"
-				},500,function(){
-					/*$(base).animate({
-						height: $height+'px'
-					});*/
-				});
+        slider.css({
+            "width" : itemsWidth+"px",
+            "padding" : 0+"px",
+            "margin" : 0+"px",
+        });$(settings.slider+"*").css("box-sizing", "border-box");
 
-				$(slider).css({
-					width: $ancho*$num_items+'px'
-				});
+        items.css({
+            "width" : itemWidth,
+            "box-sizing" : "border-box",
+        });$(settings.slider+" > *:first-child").css("margin-left", 0+"px");$(settings.slider+" > *:last-child").css("margin-right", 0+"px");
 
-				index = -1;
+        // Image container
+        imgView.html("<img src="+$(settings.slider+" img:first-child").attr('src')+" alt="+'ImageView'+"/>");
+        $(settings.slider+" img").click(function(){
+            
+            var src = $(this).attr('src');
+            imgView.html("<img src="+src+" alt="+'ImageView'+"/>");
 
-				_nex(type);
-		}
-		//Hacemos cambios cuando la ventana cambia de tamaño
-		$(window).on('resize',function(){
-			setTimeout(recalculate(true),500)
-		});
+            items.removeClass(settings.activeClass);
+            $(settings.slider+" > *:nth-child("+$(this).attr('num')+")").addClass(settings.activeClass);
 
-		//pasamos un id numerico a cada item
-		for(var $i = 0; $i <= $num_items; $i++ ){
-			$(items+':nth-child('+$i+')').attr('id',''+slider+'-'+$i);
-		}
+        });
 
-		var auto_nex = setInterval(_nex, timer);
+        $(window).resize(function(){
 
-		$(nex).mouseover(function(){
-			clearInterval(auto_nex);
-		});
-		$(nex).mouseout(function(){
-			auto_nex = setInterval(_nex, timer);
-		});
+            // Starting loader
+            (function(){
+                base.slideUp(500);
+            })();
 
-		$(prev).mouseover(function(){
-			clearInterval(auto_nex);
-		});
-		$(prev).mouseout(function(){
-			auto_nex = setInterval(_nex, timer);
-		});
+            // Base Settings
+            baseWidth = base.width();
+            // Items Settings
+            itemsLimit = settings.limit;
+            itemWidth = baseWidth / itemsLimit;
+            itemsWidth = itemWidth * items.length;
+            // Controlls Settings
+            next = $(settings.next);
+            prev = $(settings.prev);
+            
+            slider.css({
+                "width" : itemsWidth+"px",
+                "right" : 0+"px",
+                "padding" : 0+"px",
+                "margin" : 0+"px",
+            });$(settings.slider+"*").css("box-sizing", "border-box");
 
-/* :::::::::::::::::::::::::::::::::::::::::::::::: Controles del slider :::::::::::::::::::::::::::::::::::::::::::::::::::: */
+            items.css({
+                "width" : itemWidth,
+                "box-sizing" : "border-box",
+            });$(settings.slider+" > *:first-child").css("margin-left", 0+"px");$(settings.slider+" > *:last-child").css("margin-right", 0+"px");
 
-		function _nex(type){
-			//Incrementamos el conteo
-			index ++;
-			//calculo para el par por conteo
-			var cal_px = $an_section*index;
+            index = 0;
 
-			if(index*items_views > $num_items-1){
-				index = 0;
-				cal_px = $an_section*index;
+        });
+        
+        // End loader
+        $(window).resizeEnd({
+            delay : 500
+        }, function() {
+            base.slideDown(500, "easeInOutCirc")
+        });
 
-			}
-			if($num_items % items_views && index*items_views > $num_items-2){
-				//calculo para el impar por conteo
-				cal_px = $ancho*$num_items-$ancho*items_views;
-				index = -1;
-			}
-			if(index*items_views > $num_items-items_views){
-				//reseteamos el par	
-				cal_px = $ancho*$num_items-$ancho*items_views;//El ancho del item * el numero de items - el ancho del item * calculo de cuantos se veran
-				index = $num_items / items_views; //Numero de items entre cuantos se veran 
-				index = index.toFixed(); // Convertimos el resultado a entero
-			}
+    })();
 
-			//$(slider).css({ "-webkit-filter": "blur(1px)" });
-			if(type == true){
-				$(slider).css({
-					right : 0+'px'
-				});
-				//$(slider).css({ "-webkit-filter": "blur(0px)" });
-			}
-			else{
-				$(slider).animate({
-					right : +cal_px+'px'
-				},1000 ,function(){
-					//$(slider).css({ "-webkit-filter": "blur(0px)" });
-				});
-			}
-		}
+    $(settings.nex).click(function(){
+            
+        index += 1;
+        
+        if(items.length < (index + 1) * itemsLimit){
+            slider.animate({ "right" : (itemWidth * items.length) - (itemWidth * itemsLimit) }, 1000, "easeInOutCirc");
+            index -= 1;
+        }else{
+            slider.animate({ "right" : (index * itemsLimit) * (itemWidth + 0) }, 1000, "easeInOutCirc");
+        }
 
-		function _prev(){
-			//Incrementamos el conteo
-			index --;
-			//calculo para el impar por conteo
-			var cal_px = $an_section*index;
+        // console.log(index);
 
-			if($num_items % items_views && index < 0){
-				cal_px = $ancho*$num_items-$ancho*items_views;
-				index = $num_items / items_views-1;
-				index = index.toFixed();
-			}
-			if(index < 0){
-				//calculo para el par por conteo
-				cal_px = $ancho*$num_items-$ancho*items_views;
-				index = $num_items / items_views-1;
-				index = index.toFixed();
-			}
-			//$(slider).css({ "-webkit-filter": "blur(1px)" });
+    });
 
-			$(slider).animate({
-				right : +cal_px+'px'
-			},1000 ,function(){
-				//$(slider).css({ "-webkit-filter": "blur(0px)" });
-			});
-		}
+    $(settings.prev).click(function(){
 
-		$(nex).click(_nex);
-		$(prev).click(_prev);
+        index -= 1;
+        
+        if(prevLimit < (index + 1) * itemsLimit){
+            slider.animate({ "right" : 0 }, 1000, "easeInOutCirc");
+            index = 0;
+        }else{
+            slider.animate({ "right" : - (index * itemsLimit) * (itemWidth + 0) }, 1000, "easeInOutCirc");
+        }
 
-/* :::::::::::::::::::::::::::::::::::::::::::::::: Controles del slider :::::::::::::::::::::::::::::::::::::::::::::::::::: */
+        // console.log(index);
+
+    });
 
 }
-
-
-$(document).ready(function(){
-	//iniciamos el slider y pasamos como parametro el contenedor y los items
-	carousel_ini(
-		'#base',
-		'#contenedor',
-		'#slider',
-		'#slider > article',
-		'#nex',
-		'#prev',
-		3000
-	);
-});
